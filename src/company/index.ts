@@ -1,3 +1,4 @@
+import {Company} from './entities/Company';
 import {CompanyRepository} from './repositories/CompanyRepository';
 
 export class CompanyService {
@@ -13,5 +14,9 @@ export class CompanyService {
 		const company = this.companyRepository.findEmployeeCompanyBy(employeeId);
 		company.removeEmployee(employeeId);
 		this.companyRepository.save(company);
+	}
+
+	public getCompanyBy(employeeId: string): Company {
+		return this.companyRepository.findEmployeeCompanyBy(employeeId);
 	}
 }

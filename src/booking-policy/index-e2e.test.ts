@@ -29,6 +29,38 @@ describe('Booking Policy Acceptation', () => {
 		expectBookingAllowed(ROOM_TYPE);
 	});
 
+	describe('given a new company policy is created', () => {
+		const OTHER_ROOM_TYPE = `other-room-type-${uuid.v4()}`;
+
+		beforeEach(() => {
+			BookingPolicyService.setCompanyPolicy(COMPANY_ID, [ROOM_TYPE]);
+		});
+
+		afterAll(() => {
+			BookingPolicyService.deleteCompanyPoliciesBy(EMPLOYEE_ID);
+		});
+
+		it('employee should only be able to book room types for that policy', () => {
+			expectBookingNotAllowed(OTHER_ROOM_TYPE);
+			expectBookingAllowed(ROOM_TYPE);
+		});
+
+		describe('given a employee policy exists for the employee', () => {
+			beforeEach(() => {
+				BookingPolicyService.setEmployeePolicy(EMPLOYEE_ID, [OTHER_ROOM_TYPE]);
+			});
+
+			afterAll(() => {
+				BookingPolicyService.deleteEmployeePoliciesBy(EMPLOYEE_ID);
+			});
+
+			it('employee policy should take precedence', () => {
+				expectBookingNotAllowed(ROOM_TYPE);
+				expectBookingAllowed(OTHER_ROOM_TYPE);
+			});
+		});
+	});
+
 	describe('given a new employee policy is created', () => {
 		const OTHER_ROOM_TYPE = `other-room-type-${uuid.v4()}`;
 
@@ -40,11 +72,8 @@ describe('Booking Policy Acceptation', () => {
 			BookingPolicyService.deleteEmployeePoliciesBy(EMPLOYEE_ID);
 		});
 
-		it('booking of room types NOT in the policy should NOT be allowed', () => {
+		it('employee should only be able to book room types for that policy', () => {
 			expectBookingNotAllowed(OTHER_ROOM_TYPE);
-		});
-
-		it('booking should be allowed for that employee and room types', () => {
 			expectBookingAllowed(ROOM_TYPE);
 		});
 	});

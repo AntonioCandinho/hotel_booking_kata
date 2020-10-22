@@ -1,6 +1,7 @@
 import {BookingService} from './booking';
 import {BookingPolicyService} from './booking-policy';
-import {InMemoryEmployeePolicyRepository} from './booking-policy/repositories/InMemoryEmployeePolicyRepository';
+import {InMemoryBookingPolicyRepository} from './booking-policy/repositories/InMemoryBookingPolicyRepository';
+import {CompanyServiceGateway} from './booking-policy/gateways/CompanyServiceGateway';
 import {BookingPolicyGateway} from './booking/gateways/BookingPolicyGateway';
 import {HotelServiceGateway} from './booking/gateways/HotelServiceGateway';
 import {InMemoryBookingsRepository} from './booking/repositories/InMemoryBookingsRepository';
@@ -15,8 +16,14 @@ const hotelService = new HotelService(hotelRepository);
 const companyRepository = new InMemoryCompanyRepository();
 const companyService = new CompanyService(companyRepository);
 
-const policyEmployeeRepository = new InMemoryEmployeePolicyRepository();
-const bookingPolicyService = new BookingPolicyService(policyEmployeeRepository);
+const policyEmployeeRepository = new InMemoryBookingPolicyRepository();
+const policyCompanyRepository = new InMemoryBookingPolicyRepository();
+const companyGateway = new CompanyServiceGateway(companyService);
+const bookingPolicyService = new BookingPolicyService(
+	policyEmployeeRepository,
+	policyCompanyRepository,
+	companyGateway,
+);
 
 const hotelGateway = new HotelServiceGateway(hotelService);
 const policyGateway = new BookingPolicyGateway(bookingPolicyService);

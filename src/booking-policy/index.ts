@@ -1,18 +1,21 @@
-import {BookingAllowedService} from './domain-services/BookingAllowedService';
-import {EmployeePolicy} from './entities/EmployeePolicy';
-import {EmployeePolicyRepository} from './repositories/EmployeePolicyRepository';
+import {BookingPolicy} from './entities/BookingPolicy';
+import {CompanyByEmployeeGetter} from './gateways/CompanyByEmployeeGetter';
+import {BookingPolicyRepository} from './repositories/BookingPolicyRepository';
 
 export class BookingPolicyService {
 	public constructor(
-		private readonly employeePolicyRepo: EmployeePolicyRepository,
+		private readonly employeePolicyRepo: BookingPolicyRepository,
+		private readonly companyPolicyRepo: BookingPolicyRepository,
+		private readonly companyGateway: CompanyByEmployeeGetter,
 	) {}
 
 	public setCompanyPolicy(companyId: string, roomTypes: string[]): void {
-		throw Error('Not implemented');
+		const policy = new BookingPolicy(companyId, roomTypes);
+		this.companyPolicyRepo.save(policy);
 	}
 
 	public setEmployeePolicy(employeeId: string, roomTypes: string[]): void {
-		const policy = new EmployeePolicy(employeeId, roomTypes);
+		const policy = new BookingPolicy(employeeId, roomTypes);
 		this.employeePolicyRepo.save(policy);
 	}
 
@@ -20,9 +23,26 @@ export class BookingPolicyService {
 		this.employeePolicyRepo.deleteBy(employeeId);
 	}
 
+	public deleteCompanyPoliciesBy(companyId: string): void {
+		this.companyPolicyRepo.deleteBy(companyId);
+	}
+
 	public isBookingAllowed(employeeId: string, roomType: string): boolean {
-		const bookingAllowedService = new BookingAllowedService(roomType);
-		const policy = this.employeePolicyRepo.getBy(employeeId);
-		return bookingAllowedService.isBookingAllowed(policy);
+		const employeePolicy = this.employeePolicyRepo.getBy(employeeId);
+		if (employeePolicy.isDefined) {
+			return employeePolicy.get.isBookingAllowed(roomType);
+		}
+
+		const companyId = this.companyGateway.getCompanyIdBy(employeeId);
+		if (companyId.isEmpty) {
+			return true;
+		}
+
+		const companyPolicy = this.companyPolicyRepo.getBy(companyId.get);
+		if (companyPolicy.isDefined) {
+			return companyPolicy.get.isBookingAllowed(roomType);
+		}
+
+		return true;
 	}
 }

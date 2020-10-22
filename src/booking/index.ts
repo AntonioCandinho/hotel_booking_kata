@@ -1,5 +1,5 @@
 import * as uuid from 'uuid';
-import {Booking} from './entities/Booking';
+import {Booking, BookingDTO} from './entities/Booking';
 import {AvailableHotelRoomsRetriever} from './gateways/AvailableHotelRoomsRetriever';
 import {BookingPolicyChecker} from './gateways/BookingPolicyChecker';
 import {BookingsRepository} from './repositories/BookingsRepository';

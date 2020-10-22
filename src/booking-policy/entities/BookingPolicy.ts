@@ -1,6 +1,6 @@
-export class EmployeePolicy {
+export class BookingPolicy {
 	public constructor(
-		public readonly employeeId: string,
+		public readonly resourceId: string,
 		private readonly roomTypes: string[],
 	) {}
 
