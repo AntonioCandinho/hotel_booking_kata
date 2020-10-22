@@ -1,7 +1,7 @@
 import * as uuid from 'uuid';
 import {Services} from '../index';
 
-const {BookingPolicyService, HotelService, CompanyService} = Services;
+const {BookingPolicyService, CompanyService} = Services;
 
 describe('Booking Policy Acceptation', () => {
 	const COMPANY_ID = `company-id-${uuid.v4()}`;

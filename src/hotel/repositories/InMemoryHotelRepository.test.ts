@@ -2,7 +2,7 @@ import * as uuid from 'uuid';
 import {Hotel} from '../entities/Hotel';
 import {InMemoryHotelRepository} from './InMemoryHotelRepository';
 
-describe.only('InMemoryHotelRepository', () => {
+describe('InMemoryHotelRepository', () => {
 	const HOTEL = new Hotel(`hotel-id-${uuid.v4()}`, `hotel-name-${uuid.v4()}`);
 
 	let inMemoryRepository: InMemoryHotelRepository;

@@ -1,5 +1,4 @@
 import * as uuid from 'uuid';
-import {Booking} from './booking/resources/BookingService';
 import {Services} from './index';
 
 const {
@@ -50,16 +49,15 @@ describe('Hotel Booking Acceptation Tests', () => {
 					checkInDate,
 					checkOutDate,
 				);
-				const expectedBooking: Booking = {
-					id: booking.id,
+				expect(booking).toEqual({
+					bookingId: booking.bookingId,
 					employeeId: EMPLOYEE_ID,
 					hotelId: HOTEL_ID,
 					roomNumber: ROOM_NUBMER,
 					roomType: ROOM_TYPE,
 					checkInDate,
 					checkOutDate,
-				};
-				expect(booking).toEqual(expectedBooking);
+				});
 			});
 		});
 	});
