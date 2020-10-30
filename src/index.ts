@@ -1,12 +1,13 @@
 import {BookingService} from './booking';
 import {BookingPolicyService} from './booking-policy';
-import {InMemoryBookingPolicyRepository} from './booking-policy/repositories/InMemoryBookingPolicyRepository';
 import {CompanyServiceGateway} from './booking-policy/gateways/CompanyServiceGateway';
+import {InMemoryBookingPolicyRepository} from './booking-policy/repositories/InMemoryBookingPolicyRepository';
 import {BookingPolicyGateway} from './booking/gateways/BookingPolicyGateway';
 import {HotelServiceGateway} from './booking/gateways/HotelServiceGateway';
 import {InMemoryBookingsRepository} from './booking/repositories/InMemoryBookingsRepository';
 import {CompanyService} from './company';
 import {InMemoryCompanyRepository} from './company/repositories/InMemoryCompanyRepository';
+import {EmployeeWatchdog} from './employee-watchdog';
 import {HotelService} from './hotel';
 import {InMemoryHotelRepository} from './hotel/repositories/InMemoryHotelRepository';
 
@@ -34,7 +35,19 @@ const bookingService = new BookingService(
 	bookingsRepo,
 );
 
+const employeeWatchDog = new EmployeeWatchdog(
+	companyService,
+	bookingPolicyService,
+	bookingService,
+);
+employeeWatchDog.start();
+
+const stopWatchDog = () => employeeWatchDog.stop();
+process.on('SIGTERM', stopWatchDog);
+process.on('SIGINT', stopWatchDog);
+
 export const Services = {
+	EmployeeWatchDog: employeeWatchDog,
 	HotelService: hotelService,
 	CompanyService: companyService,
 	BookingPolicyService: bookingPolicyService,

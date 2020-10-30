@@ -26,6 +26,7 @@
     "uuid": "^8.3.0"
   },
   "dependencies": {
+    "rxjs": "^6.6.3",
     "ts-option": "^2.1.0"
   }
 }

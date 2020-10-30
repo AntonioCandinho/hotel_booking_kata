@@ -28,6 +28,13 @@ describe('InMemoryBookingsRepository', () => {
 		repository = new InMemoryBookingsRepository();
 	});
 
+	it('getBy should throw an error if no bookings', () => {
+		const bookingId = `${Math.random()}`;
+		expect(() => repository.getBy(bookingId)).toThrow(
+			`No booking with id ${bookingId}`,
+		);
+	});
+
 	describe('given some bookings', () => {
 		let hotelABookings: Booking[];
 		let hotelBBookings: Booking[];
@@ -45,6 +52,25 @@ describe('InMemoryBookingsRepository', () => {
 			[...hotelABookings, ...hotelBBookings].forEach((b) =>
 				repository.deleteBy(b.bookingId),
 			);
+		});
+
+		describe('when a booking is deleted by employee id', () => {
+			let booking: Booking;
+
+			beforeEach(() => {
+				[booking] = hotelABookings;
+				repository.deleteEmployeeBookingsBy(booking.employeeId);
+			});
+
+			it('getBy should not be able to retrieve it', () => {
+				expect(() => repository.getBy(booking.bookingId)).toThrowError();
+			});
+		});
+
+		it('should be able to retrieve a single booking', () => {
+			const [booking] = hotelABookings;
+			const receivedBooking = repository.getBy(booking.bookingId);
+			expect(receivedBooking).toEqual(booking);
 		});
 
 		it('should be able to get concurrent bookings fot the same hotel', () => {

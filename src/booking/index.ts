@@ -33,4 +33,16 @@ export class BookingService {
 		this.repo.save(booking);
 		return booking.asDTO();
 	}
+
+	public getBookingBy(bookingId: string): BookingDTO {
+		return this.repo.getBy(bookingId).asDTO();
+	}
+
+	public deteleBookingBy(bookingId: string): void {
+		return this.repo.deleteBy(bookingId);
+	}
+
+	public deleteEmployeeBookignsBy(employeeId: string): void {
+		this.repo.deleteEmployeeBookingsBy(employeeId);
+	}
 }

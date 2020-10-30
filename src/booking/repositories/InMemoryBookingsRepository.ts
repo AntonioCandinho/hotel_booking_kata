@@ -8,7 +8,23 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 		this.bookings = new Map();
 	}
 
-	getConcurrentBookings(booking: Booking): Booking[] {
+	public getBy(bookingId: string): Booking {
+		if (!this.bookings.has(bookingId)) {
+			throw Error(`No booking with id ${bookingId}`);
+		}
+		return this.bookings.get(bookingId);
+	}
+
+	public deleteEmployeeBookingsBy(employeeId: string): void {
+		const bookings = [...this.bookings.values()];
+		for (const booking of bookings) {
+			if (booking.employeeId === employeeId) {
+				this.bookings.delete(booking.bookingId);
+			}
+		}
+	}
+
+	public getConcurrentBookings(booking: Booking): Booking[] {
 		const concurrentBookings = [];
 		const cIn = booking.checkInDate.getTime();
 		const cOut = booking.checkOutDate.getTime();
@@ -25,11 +41,11 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 		return concurrentBookings;
 	}
 
-	save(booking: Booking) {
+	public save(booking: Booking) {
 		this.bookings.set(booking.bookingId, booking);
 	}
 
-	deleteBy(bookingId: string): void {
+	public deleteBy(bookingId: string): void {
 		this.bookings.delete(bookingId);
 	}
 }
